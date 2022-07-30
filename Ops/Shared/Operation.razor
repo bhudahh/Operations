@@ -9,7 +9,7 @@
 
                 <!-- Modal Header -->
                 <div class="modal-header">
-                    <h4 class="modal-title">Add a Device</h4>
+                    <h4 class="modal-title">Add an Operation</h4>
                     <button type="button" class="close" @onclick="@ModalCancel">&times;</button>
                 </div>
 
@@ -19,19 +19,15 @@
                         <DataAnnotationsValidator />
                         <ValidationSummary />
                         <div class="form-group">
+                            <label for="name">Operation Name</label>
                             <InputText id="name" @bind-Value="operation.Name" class="form-control" />
                         </div>
                         <div class="form-group">
+                            <label for="order">Order Number</label>
                             <InputNumber id="order" @bind-Value="operation.OrderInWhichToPerform" class="form-control" />
                         </div>
                         <div class="form-group">
-                            @*<InputSelect @bind-Value="operation.Device" id="device" class="form-control">
-                                    <option selected value="">None</option>
-                                    @foreach (var device in Devicess)
-                                        {
-                                        <option value="@device">@device.Name</option>
-                                     }
-                                </InputSelect>*@
+                            <label>Device</label>
                             <select @onchange="SelectedDeviceChanged" class="form-control">
                                 <option selected value="">None</option>
                                 @foreach (var device in Devicess)

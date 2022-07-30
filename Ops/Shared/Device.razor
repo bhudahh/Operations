@@ -19,9 +19,11 @@
                         <DataAnnotationsValidator />
                         <ValidationSummary />
                         <div class="form-group">
+                            <label for="name">Device Name</label>
                             <InputText id="name" @bind-Value="device.Name" class="form-control" />
                         </div>
                         <div class="form-group">
+                            <label>Device Type</label>
                             <InputSelect @bind-Value="device.deviceType" class="form-control">
                                 @foreach (var deviceType in Enum.GetValues(typeof(DeviceType)))
                                     {
@@ -68,6 +70,9 @@ else
         </tbody>
     </table>
 }
+<div class="alert alert-primary" role="alert">
+    Please add a device before adding an operation
+</div>
 <Operation Devicess="devices" />
 @code {
     private int currentCount { get; set; } = 0;
