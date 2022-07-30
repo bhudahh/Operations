@@ -1,0 +1,143 @@
+﻿@using Models
+<h3>Operation</h3>
+<button class="btn btn-primary" @onclick="@ModalShow">Add a new Operation</button>
+@if (showModal)
+{
+    <div class="modal fade show" id="myModal" style="display:block" aria-modal="true" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+
+                <!-- Modal Header -->
+                <div class="modal-header">
+                    <h4 class="modal-title">Add a Device</h4>
+                    <button type="button" class="close" @onclick="@ModalCancel">&times;</button>
+                </div>
+
+                <!-- Modal body -->
+                <div class="modal-body">
+                    <EditForm Model="@operation">
+                        <DataAnnotationsValidator />
+                        <ValidationSummary />
+                        <div class="form-group">
+                            <InputText id="name" @bind-Value="operation.Name" class="form-control" />
+                        </div>
+                        <div class="form-group">
+                            <InputNumber id="order" @bind-Value="operation.OrderInWhichToPerform" class="form-control" />
+                        </div>
+                        <div class="form-group">
+                            @*<InputSelect @bind-Value="operation.Device" id="device" class="form-control">
+                                    <option selected value="">None</option>
+                                    @foreach (var device in Devicess)
+                                        {
+                                        <option value="@device">@device.Name</option>
+                                     }
+                                </InputSelect>*@
+                            <select @onchange="SelectedDeviceChanged" class="form-control">
+                                <option selected value="">None</option>
+                                @foreach (var device in Devicess)
+                                {
+                                    <option value="@device.DeviceID">@device.Name</option>
+                                }
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-success" @onclick="@Save">Save</button>
+                    </EditForm>
+                </div>
+
+                <!-- Modal footer -->
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" @onclick="@ModalCancel">Cancel</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+}
+@if (operations == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table my-2">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Order In Which ToPerform</th>
+                <th>Device</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var operation in operations)
+            {
+                <tr>
+                    <td>@operation.OperationID</td>
+                    <td>@operation.Name</td>
+                    <td>@operation.OrderInWhichToPerform</td>
+                    <td>@operation.Device.Name</td>
+                    <td>
+                        <button class="btn btn-danger" @onclick="@(() => operations.Remove(operation))">
+                            Delete @operation.OperationID
+                        </button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+@code {
+    [Parameter]
+    public List<DeviceModel> Devicess { get; set; }
+    private DeviceModel _selected = new DeviceModel();
+    private int currentCount { get; set; } = 0;
+    private OperationModel operation = new();
+    private List<OperationModel> operations = new();
+    bool showModal = false;
+
+    void ModalShow() => showModal = true;
+    void ModalCancel() => showModal = false;
+    void ModalOk()
+    {
+        Console.WriteLine("Modal ok");
+        showModal = false;
+    }
+    void Save()
+    {
+        if (!string.IsNullOrWhiteSpace(operation.Name))
+        {
+            currentCount++;
+            operations.Add(new OperationModel
+            {
+                OperationID = currentCount,
+                Name = operation.Name,
+                OrderInWhichToPerform = operation.OrderInWhichToPerform
+            ,
+                Device = operation.Device
+            });
+            showModal = false;
+            operation.Name = string.Empty;
+            SelectedDevice = "";
+        }
+    }
+    public string SelectedDevice { get; set; }
+    void SelectedDeviceChanged(ChangeEventArgs e)
+    {
+        if (e.Value is not null)
+        {
+            int deviceID = int.Parse((string)e.Value);
+            operation.Device = new DeviceModel
+            {
+                DeviceID = deviceID,
+                deviceType = Devicess.Where(x => x.DeviceID == deviceID).FirstOrDefault().deviceType,
+                Name = Devicess.Where(x => x.DeviceID == deviceID).FirstOrDefault().Name,
+            };
+        }
+    }
+    void DeleteRow(int Id)
+    {
+
+    }
+}
+
